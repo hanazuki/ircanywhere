@@ -13,6 +13,8 @@ App.ApplicationRoute = Ember.Route.extend({
 				outlet: 'modal',
 				parentView: 'application'
 			});
-		}
+		},
+
+		error: report_error
 	}
 });

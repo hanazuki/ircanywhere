@@ -34,6 +34,11 @@ App.IndexController = Ember.ObjectController.extend(App.Visibility, {
 	isAuthed: function() {
 		if (this.socket.authed === false) {
 			this.transitionToRoute('login');
+		} else {
+			Raven.setUser({
+				email: this.get('socket.users.0.email'),
+				id: this.get('socket.users.0._id')
+			});
 		}
 	}.observes('socket.authed'),
 
