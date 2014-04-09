@@ -119,7 +119,7 @@ IRCHandler.prototype.registered = function(client, message) {
 	setTimeout(function() {
 		application.Events.update({user: client.internal.userId, network: client.server}, {$set: {
 			network: message.capabilities.network.name,
-		}}, {multi: true}, function(err, doc) {});
+		}}, {multi: true, safe: false});
 	}, 5000);
 	// update events later on so when we're totally finished connecting (we can't assume at any point because of half assed ircds
 	// not sending out proper stuff.. we know that we're registered here we just give it 5 seconds for other shit to come in
@@ -674,6 +674,24 @@ IRCHandler.prototype.quietlist = function(client, message) {
 	}
 
 	rpcHandler.push(client.internal.userId, 'quietList', {channel: message.channel, items: message.quietlist, type: 'quietList'});
+}
+
+/**
+ * Handles an incoming list event
+ *
+ * @method list
+ * @param {Object} client A valid client object
+ * @param {Object} message A valid message object
+ * @return void
+ */
+IRCHandler.prototype.list = function(client, message) {
+	if (!message.list) {
+		return false;
+	}
+
+	console.log(message.list);
+	client.internal._listBlock = false;
+	//rpcHandler.push(client.internal.userId, 'quietList', {channel: message.channel, items: message.quietlist, type: 'quietList'});
 }
 
 /* XXX - Events TODO

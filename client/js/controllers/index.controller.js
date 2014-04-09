@@ -23,11 +23,13 @@ App.IndexController = Ember.ObjectController.extend(App.Visibility, {
 			this.set('tabId', tab.get('_id'));
 			// change the tab id
 		}
-	}.observes('socket.users.@each.selectedTab'),
+	}.observes('socket.users.@each.selectedTab', 'socket.tabs.length'),
 	
 	determinePath: function() {
 		if (this.socket.authed === null) {
 			this.socket.connect();
+		} else if (this.socket.authed === false) {
+			this.transitionToRoute('login');
 		}
 	},
 
@@ -35,6 +37,11 @@ App.IndexController = Ember.ObjectController.extend(App.Visibility, {
 		if (this.socket.authed === false) {
 			this.transitionToRoute('login');
 		} else {
+			if (this.get('socket.networks.length') === 0 || this.get('socket.tabs.length') === 0) {
+				this.socket.set('_empty', true);
+				this.transitionToRoute('nonetworks');
+			}
+
 			Raven.setUser({
 				email: this.get('socket.users.0.email'),
 				id: this.get('socket.users.0._id')
